@@ -1,0 +1,129 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: college-admissions-system
+  labels:
+    app: admissions-predictor
+spec:
+  replicas: 1
+  selector:
+    app: admissions-predictor
+  template:
+    metadata:
+      labels:
+        app: admissions-predictor
+    spec:
+      containers:
+        - name: cds-scraper
+          image: registry.example.com/cds-scraper:latest
+          env:
+            - name: DATABASE_URL
+              value: postgresql://postgres:password@db:5432/admissions
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - mountPath: /data
+              name: cds-storage
+
+        - name: ipeds-api-collector
+          image: registry.example.com/ipeds-api-collector:latest
+          env:
+            - name: API_KEY
+              value: "your-ipeds-api-key"
+
+        - name: student-transcript-parser
+          image: registry.example.com/transcript-parser:latest
+          volumeMounts:
+            - mountPath: /uploads
+              name: transcript-storage
+
+        - name: match-predictor
+          image: registry.example.com/match-predictor:latest
+          env:
+            - name: MODEL_PATH
+              value: /models/admissions-model.pkl
+
+        - name: web-dashboard
+          image: registry.example.com/web-dashboard:latest
+          ports:
+            - containerPort: 8080
+
+        - name: pdf-report-generator
+          image: registry.example.com/pdf-generator:latest
+          volumeMounts:
+            - mountPath: /reports
+              name: report-storage
+
+      volumes:
+        - name: cds-storage
+          emptyDir: {}
+        - name: transcript-storage
+          persistentVolumeClaim:
+            claimName: transcript-pvc
+        - name: report-storage
+          persistentVolumeClaim:
+            claimName: reports-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: admissions-web-service
+spec:
+  selector:
+    app: admissions-predictor
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+
+---
+
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: paideiapilot-cicd
+spec:
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: "https://github.com/your-org/paideiapilot.git"
+        - name: revision
+          value: "main"
+
+    - name: build-image
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-source
+      params:
+        - name: IMAGE
+          value: "registry.example.com/paideiapilot:latest"
+
+    - name: push-image
+      taskRef:
+        name: buildah
+      runAfter:
+        - build-image
+      params:
+        - name: IMAGE
+          value: "registry.example.com/paideiapilot:latest"
+        - name: TLSVERIFY
+          value: "false"
+
+    - name: deploy-application
+      taskRef:
+        name: openshift-deploy
+      runAfter:
+        - push-image
+      params:
+        - name: DEPLOYMENT
+          value: "college-admissions-system"
+
