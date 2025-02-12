@@ -11,47 +11,48 @@ The product will consist of multiple containerized microservices, each handling 
 1️⃣ Data Collection & Processing
 📥 Agents:
 
-CDS Scraper: Extracts SAT/ACT, GPA, class rank, AP courses, and extracurricular data from Common Data Set reports.
-IPEDS API Connector: Fetches standardized college admission statistics from the federal IPEDS database.
-Supplementary Data Collector: Scrapes additional college data (e.g., sports participation, admission essays, financial aid policies).
-Student Transcript Parser: Extracts GPA, courses taken, extracurriculars, AP/IB scores from uploaded transcripts.
+1. CDS Scraper: Extracts SAT/ACT, GPA, class rank, AP courses, and extracurricular data from Common Data Set reports.
+2. IPEDS API Connector: Fetches standardized college admission statistics from the federal IPEDS database.
+3. Supplementary Data Collector: Scrapes additional college data (e.g., sports participation, admission essays, financial aid policies).
+4. Student Transcript Parser: Extracts GPA, courses taken, extracurriculars, AP/IB scores from uploaded transcripts.
 📦 Output:
 
-Centralized College Database (PostgreSQL/SQLite).
-Structured Student Profile (JSON format).
-Standardized Admissions Model Training Data.
+1. Centralized College Database (PostgreSQL/SQLite).
+2. Structured Student Profile (JSON format).
+3. Standardized Admissions Model Training Data.
+
 2️⃣ Core Analysis Engine
 🔎 Modules:
 
-College Match Predictor 🏫
-
+1. College Match Predictor 🏫
 Uses historical admissions data to classify colleges into:
 🎯 Target (Likely admit)
 📈 Reach (Possible but competitive)
 🔻 Unlikely (Too selective)
 Based on GPA, SAT/ACT, AP courses, class rank, extracurriculars.
-Personalized Advice Generator 📌
 
+2. Personalized Advice Generator 📌
 Analyzes deficiencies in the student’s profile.
 Provides actionable recommendations, e.g.:
 “Take 2 more AP classes in Math/Science to improve competitiveness.”
 “Your GPA is strong, but lack of leadership roles may hurt your chances at top schools.”
 “SAT is low for your reach schools; retaking could improve your odds.”
-Financial Aid Estimator 💰 (Future feature)
 
+3. Financial Aid Estimator 💰 (Future feature)
 Uses income data and tuition models to suggest affordable schools.
+
 3️⃣ User Interface & Reporting
 📊 Tools:
 
-Interactive Web Dashboard (React + Flask API)
-
+1. Interactive Web Dashboard (React + Flask API)
 Upload transcript 📄
 View match results & advice 🎯
 Filter & explore colleges 📌
-Automated PDF Report Generator
 
+2. Automated PDF Report Generator
 Generates a detailed admissions analysis report for users.
-REST API for programmatic access.
+
+3. REST API for programmatic access.
 
 📌 Development Roadmap
 🔽 Phase 1: Core Data & Basic Reporting
