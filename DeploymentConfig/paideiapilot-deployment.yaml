@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: cds-scraper
-          image: registry.example.com/cds-scraper:latest
+          image: quay.io/jeremiahbuckley/cds-scraper:latest
           env:
             - name: DATABASE_URL
               value: postgresql://postgres:password@db:5432/admissions
@@ -28,30 +28,30 @@ spec:
               name: cds-storage
 
         - name: ipeds-api-collector
-          image: registry.example.com/ipeds-api-collector:latest
+          image: quay.io/jeremiahbuckley/ipeds-api-collector:latest
           env:
             - name: API_KEY
               value: "your-ipeds-api-key"
 
         - name: student-transcript-parser
-          image: registry.example.com/transcript-parser:latest
+          image: quay.io/jeremiahbuckley/transcript-parser:latest
           volumeMounts:
             - mountPath: /uploads
               name: transcript-storage
 
         - name: match-predictor
-          image: registry.example.com/match-predictor:latest
+          image: quay.io/jeremiahbuckley/match-predictor:latest
           env:
             - name: MODEL_PATH
               value: /models/admissions-model.pkl
 
         - name: web-dashboard
-          image: registry.example.com/web-dashboard:latest
+          image: quay.io/jeremiahbuckley/web-dashboard:latest
           ports:
             - containerPort: 8080
 
         - name: pdf-report-generator
-          image: registry.example.com/pdf-generator:latest
+          image: quay.io/jeremiahbuckley/pdf-generator:latest
           volumeMounts:
             - mountPath: /reports
               name: report-storage
